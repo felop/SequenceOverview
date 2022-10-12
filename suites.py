@@ -23,7 +23,7 @@ def init():
     pygame.draw.line(screen, axes_color, (0,input_size[1]/2), (input_size[0],input_size[1]/2))
 
     bissec_color = (40,130,0)
-    pygame.draw.line(screen, bissec_color, (0,0), (input_size[0],input_size[1]))
+    #pygame.draw.line(screen, bissec_color, (0,0), (input_size[0],input_size[1]))
     pygame.draw.line(screen, bissec_color, (input_size[0],0), (0,input_size[1]))
 
     #### OUTPUT ####
@@ -33,13 +33,14 @@ def init():
 def update():
     mouse_pos = pygame.mouse.get_pos()
     mouse_pos = min(input_size[1],mouse_pos[0]),min(input_size[1],mouse_pos[1])
+    mouse_pos = (125*1.5,125*3)
 
     func_color = (100,255,255)
     global func
     def func(x):
-        f = lambda x: math.sqrt(-x)#9/(6-x)#-1.1*x-2
+        f = lambda x: 9/(6-x)#-1.1*x-2
         try:
-            value = f(x)-f(0)
+            value = f(x)#-f(0)
             defined = True
         except ZeroDivisionError:
             value = None
@@ -58,14 +59,13 @@ def update():
     u0_line_color = (255,150,50)
     pygame.draw.line(screen, u0_line_color, mouse_pos, (mouse_pos[0],input_size[1]/2))
     u0_text = text_font.render("U0", True, u0_line_color)
-    screen.blit(u0_text, (mouse_pos[0]-17,input_size[1]/2+2))
+    screen.blit(u0_text, (mouse_pos[0]-17,input_size[1]/2-13))
 
     u1_line_color = (255,100,100)
     prev_mirrored = (mouse_pos[0], input_size[1]/2)
     image, mirrored, defined = step(prev_mirrored[0])
     boundaries = lambda x: x[0] >= 0 and x[1] >= 0 and x[0] <= input_size[0] and x[1] <= input_size[1]
     i = 0
-    print(defined)
     if defined:
         while math.sqrt((image[0]-mirrored[0])**2+ (image[1]-mirrored[1])**2) > 3 and boundaries(image) and boundaries(mirrored):
             pygame.draw.line(screen, u1_line_color, (int(prev_mirrored[0]),int(prev_mirrored[1])), (int(image[0]),int(image[1])))
@@ -119,7 +119,7 @@ func = lambda x: x
 bg_color = (0,0,0)
 size = (1300,500)
 input_size = (500,500)
-input_scale = (20,20)
+input_scale = (8,8)
 border_size = (20,30)
 output_size = (size[0]-input_size[0]-2*border_size[0], size[1]-2*border_size[1])
 
