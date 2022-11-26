@@ -5,7 +5,7 @@ def init():
     screen.fill(colors[th]["bg"])
 
     pygame.draw.line(screen, colors[th]["bissec"], (input_size[0],0), (0,input_size[1]))
-    for dist in range(thickness["bissec"]-1):
+    for dist in range(1,thickness["bissec"]+1):
         pygame.draw.line(screen, colors[th]["bissec"], (input_size[0]-1*dist,0), (0,input_size[1]-1*dist))
         pygame.draw.line(screen, colors[th]["bissec"], (input_size[0],dist), (0,input_size[1]+1*dist))
 
@@ -31,7 +31,8 @@ def init():
 def update():
     mouse_pos = pygame.mouse.get_pos()
     mouse_pos = min(input_size[1],mouse_pos[0]),min(input_size[1],mouse_pos[1])
-#    mouse_pos = (125*1.5,250)
+    if fixed_U0:
+        mouse_pos = fixed_U0
 
     global func
     def func(x):
@@ -51,7 +52,7 @@ def update():
         defined, val_y = func(val_x/input_size[0]*input_scale[0]-input_scale[0]/2)
         if defined:
             pygame.gfxdraw.pixel(screen, val_x, int((-val_y+input_scale[0]/2)*input_size[0]/input_scale[0]), colors[th]["func"])
-            for dist in range(thickness["func"]-1):
+            for dist in range(1,thickness["func"]+1):
                 pygame.gfxdraw.pixel(screen, val_x, int((-val_y+input_scale[0]/2)*input_size[0]/input_scale[0])-1*dist, colors[th]["func"])
                 pygame.gfxdraw.pixel(screen, val_x, int((-val_y+input_scale[0]/2)*input_size[0]/input_scale[0])+1*dist, colors[th]["func"])
 
@@ -112,14 +113,15 @@ def step(pos):
             return None, None, False
 
 func = lambda x: x
-size = (1300,500)
+size = (1300,501)
 input_size = (500,500)
 input_scale = (8,8)
 border_size = (20,30)
 output_size = (size[0]-input_size[0]-2*border_size[0], size[1]-2*border_size[1])
+fixed_U0 = [None, (lambda x,y : [input_size[0]/input_scale[0]*(x+input_scale[0]/2),input_size[1]/input_scale[1]*(-y+input_scale[1]/2)])(-1,-2)][1]
 thickness = {
-    "func" : 3,
-    "bissec" : 3,
+    "func" : 0,
+    "bissec" : 1,
 }
 th = ["light","dark"][1]
 
