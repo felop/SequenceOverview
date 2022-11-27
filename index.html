@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/gh/dreasgrech/jsLatex/jquery.jslatex.js"></script>
     <script type="text/javascript" defer>
       $(function () {
-        $(".sequence").latex();
+        $(".sequence").latex({url: 'https://latex.codecogs.com/svg.image?{e}'});
       });
       window.print();
     </script>
@@ -15,7 +15,7 @@
   <body>
     <img src="image.jpg">
     <div class="sequence">
-      f(x) = \frac{x}{\sqrt{x+4}}+2 \;\;\; u_{n+1} = f(u_n) \;\;\; u_0 = -3
+      f(x) = \frac{x}{\sqrt{x+4}}+2 \;\;\; u_{n+1} = f(u_n) \;\;\; u_0 = -3 
     </div>
     <p>github.com/felop/suites</p>
     <style>
@@ -28,9 +28,9 @@
         margin: 0 1%;
       }
       .sequence {
-        width: 25%;
+        width: 35.6%;
         border: solid 1px black;
-        padding: 7px;
+        padding: 7px 7px 2px 7px;
         margin: 3% 0 0 1%;
         float: left;
       }
