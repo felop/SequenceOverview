@@ -1,5 +1,7 @@
 import pygame, math
 from pygame import gfxdraw
+from pytexit import py2tex
+import webbrowser
 
 def init():
     screen.fill(colors[th]["bg"])
@@ -34,9 +36,8 @@ def update():
     if fixed_U0:
         mouse_pos = fixed_U0
 
-    global func
+    global func, f
     def func(x):
-        f = lambda x: 9/(6-x)#-1.1*x-2
         try:
             value = f(x)#-f(0)
             defined = True
@@ -113,14 +114,17 @@ def step(pos):
             return None, None, False
 
 func = lambda x: x
+stringF = "x/math.sqrt(x+4) +2"
+f = lambda x: eval(stringF)
 size = (1300,501)
 input_size = (500,500)
 input_scale = (8,8)
 border_size = (20,30)
 output_size = (size[0]-input_size[0]-2*border_size[0], size[1]-2*border_size[1])
-fixed_U0 = [None, (lambda x,y : [input_size[0]/input_scale[0]*(x+input_scale[0]/2),input_size[1]/input_scale[1]*(-y+input_scale[1]/2)])(-1,-2)][1]
+U0 = (-3,-3)
+fixed_U0 = [None, (lambda x,y : [input_size[0]/input_scale[0]*(x+input_scale[0]/2),input_size[1]/input_scale[1]*(-y+input_scale[1]/2)])(U0[0],U0[1])][1]
 thickness = {
-    "func" : 0,
+    "func" : 1,
     "bissec" : 1,
 }
 th = ["light","dark"][1]
@@ -128,27 +132,27 @@ th = ["light","dark"][1]
 colors = {
     "light" : {
         "bg" : (255,255,255),
-        "axes" : (0,150,0),
-        "bissec" : (20,190,20),
+        "axes" : (50,50,50),
+        "bissec" : (118,120,237),
         "grid" : (150,150,150),
         "text" : (0,0,0),
         "rect" : (230,230,230),
-        "func" : (0,200,200),
-        "u0_line" : (255,150,50),
-        "u1_line" : (200,60,60),
+        "func" : (243,91,4),
+        "u0_line" : (243,91,4),
+        "u1_line" : (241,135,1),
         "pointer" : (0,0,0),
         "outputText" : (50,50,50)
     },
     "dark" : {
         "bg" : (0,0,0),
-        "axes" : (100,255,0),
-        "bissec" : (40,130,0),
+        "axes" : (100,100,100),
+        "bissec" : (118,120,237),
         "grid" : (50,50,50),
         "text" : (150,150,150),
         "rect" : (50,50,50),
-        "func" : (100,255,255),
-        "u0_line" : (255,150,50),
-        "u1_line" : (255,100,100),
+        "func" : (243,91,4),
+        "u0_line" : (243,91,4),
+        "u1_line" : (241,135,1),
         "pointer" : (255,255,255),
         "outputText" : (200,200,200)
     }
@@ -168,3 +172,15 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    KeysPressed = pygame.key.get_pressed()
+    if KeysPressed[pygame.K_p] == 1:
+        th = ["light","dark"][0]
+        init();update()
+        pygame.image.save(screen, "image.jpg")
+        running = False
+        with open("index.html","r") as htmlPage:
+            lines = htmlPage.readlines()
+            lines[17] = "      f(x) = "+ py2tex(stringF,print_formula=False,print_latex=False)[2:-2] +" \;\;\; u_{n+1} = f(u_n) \;\;\; u_0 = "+ str(U0[0]) +" \n"
+        with open("index.html","w+") as htmlPage:
+            htmlPage.write("".join(lines))
+        webbrowser.open_new_tab("index.html")
