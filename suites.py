@@ -49,13 +49,20 @@ def update():
             defined = False
         return defined, value
 
+    imagesFunc = {}
     for val_x in range(input_size[0]):
         defined, val_y = func(val_x/input_size[0]*input_scale[0]-input_scale[0]/2)
-        if defined:
-            pygame.gfxdraw.pixel(screen, val_x, int((-val_y+input_scale[0]/2)*input_size[0]/input_scale[0]), colors[th]["func"])
+        if defined and abs(val_y) <= input_scale[0]:
+            imagesFunc[val_x] = int((-val_y+input_scale[0]/2)*input_size[0]/input_scale[0])
+    keys = list(imagesFunc.keys())
+    for i in range(len(imagesFunc)-1):
+        if keys[i+1] - keys[i] == 1:
+            pygame.draw.line(screen, colors[th]["func"], (keys[i],imagesFunc[keys[i]]), (keys[i+1],imagesFunc[keys[i+1]]))
             for dist in range(1,thickness["func"]+1):
-                pygame.gfxdraw.pixel(screen, val_x, int((-val_y+input_scale[0]/2)*input_size[0]/input_scale[0])-1*dist, colors[th]["func"])
-                pygame.gfxdraw.pixel(screen, val_x, int((-val_y+input_scale[0]/2)*input_size[0]/input_scale[0])+1*dist, colors[th]["func"])
+                pygame.draw.line(screen, colors[th]["func"], (keys[i],imagesFunc[keys[i]]-1*dist), (keys[i+1],imagesFunc[keys[i+1]]-1*dist))
+                pygame.draw.line(screen, colors[th]["func"], (keys[i],imagesFunc[keys[i]]+1*dist), (keys[i+1],imagesFunc[keys[i+1]]+1*dist))
+                pygame.draw.line(screen, colors[th]["func"], (keys[i]-1*dist,imagesFunc[keys[i]]), (keys[i+1]-1*dist,imagesFunc[keys[i+1]]))
+                pygame.draw.line(screen, colors[th]["func"], (keys[i]+1*dist,imagesFunc[keys[i]]), (keys[i+1]+1*dist,imagesFunc[keys[i+1]]))
 
     pygame.draw.line(screen, colors[th]["u0_line"], mouse_pos, (mouse_pos[0],input_size[1]/2))
     u0_text = text_font.render("U0", True, colors[th]["u0_line"])
@@ -68,7 +75,15 @@ def update():
     if defined:
         while math.sqrt((image[0]-mirrored[0])**2+ (image[1]-mirrored[1])**2) > 3 and boundaries(image) and boundaries(mirrored):
             pygame.draw.line(screen, colors[th]["u1_line"], (int(prev_mirrored[0]),int(prev_mirrored[1])), (int(image[0]),int(image[1])))
+            for dist in range(1,thickness["u1_line"]+1):
+                pygame.draw.line(screen, colors[th]["u1_line"], (int(prev_mirrored[0])-1*dist,int(prev_mirrored[1])), (int(image[0])-1*dist,int(image[1])))
+                pygame.draw.line(screen, colors[th]["u1_line"], (int(prev_mirrored[0])+1*dist,int(prev_mirrored[1])), (int(image[0])+1*dist,int(image[1])))
+
             pygame.draw.line(screen, colors[th]["u1_line"], (int(image[0]),int(image[1])), (int(mirrored[0]),int(mirrored[1])))
+            for dist in range(1,thickness["u1_line"]+1):
+                pygame.draw.line(screen, colors[th]["u1_line"], (int(image[0]),int(image[1])-1*dist), (int(mirrored[0]),int(mirrored[1])-1*dist))
+                pygame.draw.line(screen, colors[th]["u1_line"], (int(image[0]),int(image[1])+1*dist), (int(mirrored[0]),int(mirrored[1])+1*dist))
+
             prev_mirrored = mirrored
             if i == 0:
                 pygame.draw.line(screen, colors[th]["pointer"], (image[0]-3,image[1]), (image[0]+3,image[1]))
@@ -126,6 +141,7 @@ fixed_U0 = [None, (lambda x,y : [input_size[0]/input_scale[0]*(x+input_scale[0]/
 thickness = {
     "func" : 1,
     "bissec" : 1,
+    "u1_line" : 1,
 }
 th = ["light","dark"][1]
 
