@@ -4,6 +4,7 @@ from pytexit import py2tex
 import webbrowser
 
 def init():
+    #### INPUT ####
     screen.fill(colors[th]["bg"])
 
     pygame.draw.line(screen, colors[th]["bissec"], (input_size[0],0), (0,input_size[1]))
@@ -31,15 +32,19 @@ def init():
     pygame.draw.rect(screen, colors[th]["rect"], graph)
 
 def update():
+    #### INPUT ####
     mouse_pos = pygame.mouse.get_pos()
     mouse_pos = min(input_size[1],mouse_pos[0]),min(input_size[1],mouse_pos[1])
+
+    global func, f, U0
     if fixed_U0:
         mouse_pos = fixed_U0
+    else:
+        U0 = (mouse_pos[0]/input_size[0]*input_scale[0]-input_scale[0]/2, -(mouse_pos[1]/input_size[1]*input_scale[1]-input_scale[1]/2))
 
-    global func, f
     def func(x):
         try:
-            value = f(x)#-f(0)
+            value = f(x)
             defined = True
         except ZeroDivisionError:
             value = None
@@ -95,7 +100,6 @@ def update():
     pygame.draw.line(screen, colors[th]["pointer"], (mouse_pos[0],mouse_pos[1]-5), (mouse_pos[0],mouse_pos[1]+5))
 
     #### OUTPUT ####
-
     first_images = [mouse_pos[0]/input_size[0]*input_scale[0]-input_scale[0]/2]
     for _ in range(1,15+1):
         defined, funcResult = func(first_images[-1])
@@ -155,7 +159,7 @@ colors = {
         "rect" : (230,230,230),
         "func" : (243,91,4),
         "u0_line" : (243,91,4),
-        "u1_line" : (241,135,1),
+        "u1_line" : (241,152,41),
         "pointer" : (0,0,0),
         "outputText" : (50,50,50)
     },
@@ -196,7 +200,7 @@ while running:
         running = False
         with open("index.html","r") as htmlPage:
             lines = htmlPage.readlines()
-            lines[17] = "      f(x) = "+ py2tex(stringF,print_formula=False,print_latex=False)[2:-2] +" \;\;\; u_{n+1} = f(u_n) \;\;\; u_0 = "+ str(U0[0]) +" \n"
+            lines[17] = "      f(x) = "+ py2tex(stringF,print_formula=False,print_latex=False)[2:-2] +" \;\;\; u_{n+1} = f(u_n) \;\;\; u_0 = "+ str(round(U0[0],2)) +" \n"
         with open("index.html","w+") as htmlPage:
             htmlPage.write("".join(lines))
         webbrowser.open_new_tab("index.html")
