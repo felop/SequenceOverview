@@ -11,7 +11,7 @@ $$U_0 = -3 \quad \forall n \in \mathbb{N} \quad U_{n+1} = f(U_n)$$
 
 ## Ex 2 :
 
-$$\forall x \in \left]-\infty;+\infty\right[ \quad f(x) = \frac{1}{8} \left(x+2\right) \left(11-2x\right)$$
+$$\forall x \in \mathbb{R} \quad f(x) = \frac{1}{8} \left(x+2\right) \left(11-2x\right)$$
 
 $$U_0 = -3,4 \quad \forall n \in \mathbb{N} \quad U_{n+1} = f(U_n)$$
 
