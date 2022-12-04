@@ -133,14 +133,14 @@ def step(pos):
             return None, None, False
 
 func = lambda x: x
-stringF = "x/math.sqrt(x+4) +2"
+stringF = "1/8*(x+2)*(11-2*x)" #"x/math.sqrt(x+4) +2"
 f = lambda x: eval(stringF)
 size = (1300,501)
 input_size = (500,500)
 input_scale = (8,8)
 border_size = (20,30)
 output_size = (size[0]-input_size[0]-2*border_size[0], size[1]-2*border_size[1])
-U0 = (-3,-3)
+U0 = (-34/10,-31/10)
 fixed_U0 = [None, (lambda x,y : [input_size[0]/input_scale[0]*(x+input_scale[0]/2),input_size[1]/input_scale[1]*(-y+input_scale[1]/2)])(U0[0],U0[1])][1]
 thickness = {
     "func" : 1,
