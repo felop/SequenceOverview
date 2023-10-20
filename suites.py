@@ -75,6 +75,9 @@ def update():
         except ValueError:
             value = None
             defined = False
+        except OverflowError:
+            value = None
+            defined = False
         return defined, value
 
     imagesFunc = {}
@@ -101,7 +104,7 @@ def update():
     boundaries = lambda x: x[0] >= 0 and x[1] >= 0 and x[0] <= input_size[0] and x[1] <= input_size[1]
     i = 0
     if defined:
-        while math.sqrt((image[0]-mirrored[0])**2+ (image[1]-mirrored[1])**2) > 3 and boundaries(image) and boundaries(mirrored):
+        while math.sqrt((image[0]-mirrored[0])**2 + (image[1]-mirrored[1])**2) > 3 and boundaries(image) and boundaries(mirrored):
             pygame.draw.line(screen, colors[th]["u1_line"], (int(prev_mirrored[0]),int(prev_mirrored[1])), (int(image[0]),int(image[1])))
             for dist in range(1,thickness["u1_line"]+1):
                 pygame.draw.line(screen, colors[th]["u1_line"], (int(prev_mirrored[0])-1*dist,int(prev_mirrored[1])), (int(image[0])-1*dist,int(image[1])))
@@ -117,29 +120,39 @@ def update():
                 pygame.draw.line(screen, colors[th]["pointer"], (image[0]-3,image[1]), (image[0]+3,image[1]))
                 pygame.draw.line(screen, colors[th]["pointer"], (image[0],image[1]-3), (image[0],image[1]+3))
             i += 1
-            image, mirrored,_ = step(prev_mirrored[0])
+            image, mirrored, defined = step(prev_mirrored[0])
+            if not defined:
+                break
 
     pygame.draw.line(screen, colors[th]["pointer"], (mouse_pos[0]-5,mouse_pos[1]), (mouse_pos[0]+5,mouse_pos[1]))
     pygame.draw.line(screen, colors[th]["pointer"], (mouse_pos[0],mouse_pos[1]-5), (mouse_pos[0],mouse_pos[1]+5))
 
     #### OUTPUT ####
     first_y = [mouse_pos[0]/input_size[0]*input_scale[0]-input_scale[0]/2+input_origin[0]]
-    for _ in range(1,15+1):
+    for _ in range(1,output_samples):
         defined, funcResult = func(first_y[-1]-input_origin[0])
         if not defined:
             break
         first_y.append(funcResult+input_origin[1])
-    if defined:
+    if len(first_y) >= 3:
         output_scale = [max(first_y),min(first_y)]
         if output_scale[0] != output_scale[1]:
             for i in range(len(first_y)):
-                x, y = input_size[0]+border_size[0]+int(output_size[0]/15*i), border_size[1]+output_size[1]-(first_y[i]-output_scale[1])/(output_scale[0]-output_scale[1])*output_size[1]
+                x, y = input_size[0]+border_size[0]+int(output_size[0]/(output_samples-1)*i), border_size[1]+output_size[1]-(first_y[i]-output_scale[1])/(output_scale[0]-output_scale[1])*output_size[1]
                 pygame.draw.line(screen, colors[th]["u1_line"], (x-5, y), (x+5, y))
                 pygame.draw.line(screen, colors[th]["u1_line"], (x, y-5), (x, y+5))
                 u_text = text_font.render("U"+str(i), True, colors[th]["u0_line"])
                 screen.blit(u_text, (x-17,y+2))
                 u_text = text_font.render(str(round(first_y[i],3)), True, colors[th]["outputText"])
                 screen.blit(u_text, (x-10,y+13))
+    if not defined and len(first_y) >= 3:
+        x, y = input_size[0]+border_size[0]+int(output_size[0]/(output_samples-1) * len(first_y)), border_size[1]+output_size[1]/2
+        drawVertText(screen, "UNDEF", (x - 17, y + 2), colors[th]["undefined"])
+
+def drawVertText(window, txt, centerPos, color):
+    for i in range(len(txt)):
+        letter = text_font.render(txt[i], True, color)
+        screen.blit(letter, (centerPos[0], centerPos[1]+6*(2*i-len(txt))))
 
 def step(pos):
     global func, input_size, input_scale
@@ -166,6 +179,7 @@ input_origin = (0, 0)
 input_pointerFreq = 1 # number of skipped crosses  (1 is min)
 border_size = (20,30)
 output_size = (size[0]-input_size[0]-2*border_size[0], size[1]-2*border_size[1])
+output_samples = 16
 U0 = (-34/10, -31/10)
 
 fixed_U0 = [None, (lambda x,y : [input_size[0]/input_scale[0]*(x+input_scale[0]/2-input_origin[0]),input_size[1]/input_scale[1]*(-y+input_scale[1]/2+input_origin[1])])(U0[0],U0[1])][0]
@@ -188,7 +202,8 @@ colors = {
         "u0_line" : (243,91,4),
         "u1_line" : (241,152,41),
         "pointer" : (0,0,0),
-        "outputText" : (50,50,50)
+        "outputText" : (50,50,50),
+        "undefined" : (255,0,0)
     },
     "dark" : {
         "bg" : (0,0,0),
@@ -201,7 +216,8 @@ colors = {
         "u0_line" : (243,91,4),
         "u1_line" : (241,135,1),
         "pointer" : (255,255,255),
-        "outputText" : (200,200,200)
+        "outputText" : (200,200,200),
+        "undefined" : (255,0,0)
     }
 }
 
