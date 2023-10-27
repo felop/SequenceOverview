@@ -163,7 +163,7 @@ def step(pos):
         defined, funcResult = func(pos/input_size[0]*input_scale[0]-input_scale[0]/2)
         if defined:
             image = (pos,(-funcResult+input_scale[0]/2)*input_size[0]/input_scale[0])
-            mirrored = (min(input_size[0]/2+input_size[1]/2-image[1], input_size[0]) -input_origin[0]*(input_size[0]/input_scale[0]), image[1])
+            mirrored = (min(input_size[0]/2+input_size[1]/2-image[1]-input_origin[0]*input_size[0]/input_scale[0]+input_origin[1]*input_size[1]/input_scale[1], input_size[0]), image[1])
             return image, mirrored, True
         else:
             return None, None, False
