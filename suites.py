@@ -169,20 +169,20 @@ def step(pos):
             return None, None, False
 
 func = lambda x: x
-stringF = "(x**2+2)/(2*x)"#"2.75*(1/(math.exp(-3*x)+1)-.5)*math.sqrt(2*abs(x))" #"(abs(x))**(4/3)/x" #"1/8*(x+2)*(11-2*x)" #"x/math.sqrt(x+4) +2"
+stringF = "2.75*(1/(math.exp(-3*x)+1)-.5)*math.sqrt(2*abs(x))" #"(abs(x))**(4/3)/x" #"1/8*(x+2)*(11-2*x)" #"x/math.sqrt(x+4) +2"
 fEval = lambda x: eval(stringF)
 f = lambda x: fEval(x+input_origin[0])-input_origin[1]
 size = (1300,501)
 input_size = (500,500)
-input_scale = (10, 10)
+input_scale = (10, 10) # BUG : both coordinates must be equal
 input_origin = (0, 0)
 input_pointerFreq = 1 # number of skipped crosses  (1 is min)
 border_size = (20,30)
 output_size = (size[0]-input_size[0]-2*border_size[0], size[1]-2*border_size[1])
 output_samples = 16
-U0 = (-34/10, -31/10)
+U0 = (-1, 0)
 
-fixed_U0 = [None, (lambda x,y : [input_size[0]/input_scale[0]*(x+input_scale[0]/2-input_origin[0]),input_size[1]/input_scale[1]*(-y+input_scale[1]/2+input_origin[1])])(U0[0],U0[1])][0]
+fixed_U0 = [None, (lambda x,y : [input_size[0]/input_scale[0]*(x+input_scale[0]/2-input_origin[0]),input_size[1]/input_scale[1]*(-y+input_scale[1]/2+input_origin[1])])(U0[0],U0[1])][1]
 thickness = {
     "func" : 1,
     "bissec" : 1,
