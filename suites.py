@@ -169,12 +169,12 @@ def step(pos):
             return None, None, False
 
 func = lambda x: x
-stringF = "1/8*(x+2)*(11-2*x)" #"x/math.sqrt(x+4) +2"
+stringF = "(x**2+2)/(2*x)"#"2.75*(1/(math.exp(-3*x)+1)-.5)*math.sqrt(2*abs(x))" #"(abs(x))**(4/3)/x" #"1/8*(x+2)*(11-2*x)" #"x/math.sqrt(x+4) +2"
 fEval = lambda x: eval(stringF)
 f = lambda x: fEval(x+input_origin[0])-input_origin[1]
 size = (1300,501)
 input_size = (500,500)
-input_scale = (8, 8)
+input_scale = (10, 10)
 input_origin = (0, 0)
 input_pointerFreq = 1 # number of skipped crosses  (1 is min)
 border_size = (20,30)
